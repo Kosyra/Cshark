@@ -8,15 +8,19 @@ namespace Cshark.Tests
     {
         protected readonly IWebDriver Driver;
 
-        protected BaseTest()
-        {
-            Driver = new ChromeDriver();
-        }
+        protected BaseTest() { Driver = new ChromeDriver(); }
 
         [SetUp]
-        public void SetUp()
+        public void SetUp() => Driver.Manage().Window.Maximize();
+
+        [TearDown]
+        public void TearDown()
         {
-            Driver.Manage().Window.Maximize();
+            if (Driver == null) return;
+            Driver.Manage().Cookies.DeleteAllCookies();
+            Driver.Quit();
+
         }
+
     }
 }

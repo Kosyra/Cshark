@@ -1,4 +1,5 @@
 using System;
+using Cshark.CustomExceptions;
 using OpenQA.Selenium;
 using static Cshark.Constants.Constants;
 
@@ -14,11 +15,18 @@ namespace Cshark.Pages
         #region selectors
         
         /// <summary>
-        /// Accept cookies button
+        /// Selector of accept cookies button
         /// </summary>
         private static By CookieAcceptButton => By.CssSelector("button[data-test='allow-all']");
         
+        /// <summary>
+        /// Selector of element for entering keywords of the searched product
+        /// </summary>
         private static By SearchField => By.Id("mobileSearch");
+        
+        /// <summary>
+        /// Selector of button to search products
+        /// </summary>
         private static By SubmitButton => By.CssSelector("button[type='submit']");
 
         #endregion
@@ -26,60 +34,58 @@ namespace Cshark.Pages
         #region methods
 
         /// <summary>
-        /// Opens the home page and accepts the cookies
+        /// Waits for a specific element to be loaded on the page
         /// </summary>
-        /// <param name="acceptCookie"></param>
-        /// <returns>Home page object</returns>
-        internal HomePage OpenHomePage(bool acceptCookie)
+        private void IsPageLoaded()
         {
-            Driver.Navigate().GoToUrl(HomeUrl);
-            //TODO: dodać tray catch ze zwracanym exception
-            Wait.Until(d => d.FindElement(SearchField).Displayed);
-            AcceptCookie();
-            
-            return this;
+            try
+            {
+                Wait.Until(d => d.FindElement(SearchField).Displayed);
+            }
+            catch (Exception e)
+            {
+                throw new PageNotLoadedException("ProductListPage did not loaded correctly " , e);
+            }
         }
         
         /// <summary>
-        /// Opens the home page
+        /// Opens the home page and accepts the cookies
         /// </summary>
         /// <returns>Home page object</returns>
         internal HomePage OpenHomePage()
         {
             Driver.Navigate().GoToUrl(HomeUrl);
-            //TODO: doda tray catch ze zwracanym exception
-            Wait.Until(d => d.FindElement(SearchField).Displayed);
-
+            IsPageLoaded();
+            AcceptCookie();
+            
             return this;
         }
 
         /// <summary>
         /// Accepts the cookies if it they are displayed
         /// </summary>
-        internal HomePage AcceptCookie()
+        private void AcceptCookie()
         {
             try
             {
                 Wait.Until(d => d.FindElement(CookieAcceptButton).Displayed);
                 Driver.FindElement(CookieAcceptButton).Click();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // ignored
             }
-
-            return this;
         }
 
         
         /// <summary>
         /// Presents product based on search keywords 
         /// </summary>
-        /// <param name="productName"></param>
-        /// <returns></returns>
-        internal ProductsListPage SearchProduct(string productName)
+        /// <param name="productKeyword">keyword to search for a product</param>
+        /// <returns>Product list page object</returns>
+        internal ProductsListPage SearchProduct(string productKeyword)
         {
-            Driver.FindElement(SearchField).SendKeys(productName);
+            Driver.FindElement(SearchField).SendKeys(productKeyword);
             Driver.FindElement(SubmitButton).Click();
 
             return new ProductsListPage(Driver);

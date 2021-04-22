@@ -9,15 +9,18 @@ namespace Cshark.Tests
         public void ProductsShouldBeRemovedFromBasket()
         {
             //Arrange
+            const string productTypeToSearched = "floor lamp";
             const string productName = "John Lewis & Partners Harmony Ribbon Floor Lamp";
+            const int productQuantity = 3;
+            
             var homePage = new HomePage(Driver);
             
             //Act
             var basketPage = homePage
-                .OpenHomePage(true)
-                .SearchProduct("floor lamp")
+                .OpenHomePage()
+                .SearchProduct(productTypeToSearched)
                 .GoToProductPage(productName)
-                .SetProductQuantity(3)
+                .SetProductQuantity(productQuantity)
                 .AddProductToBasket()
                 .GoToBasket()
                 .RemoveProductFromBasket();
@@ -25,6 +28,5 @@ namespace Cshark.Tests
             //Assert
             Assert.True(basketPage.IsBasketEmpty(), "The basket isn't empty");
         }
-        
     }
 }
