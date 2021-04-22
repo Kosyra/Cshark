@@ -3,7 +3,7 @@ using NUnit.Framework;
 
 namespace Cshark.Tests
 {
-    public class RemoveItemsFromBasket : BaseTest
+    public class RemoveProductsFromBasketTest : BaseTest
     {
         [Test]
         public void ProductsShouldBeRemovedFromBasket()
