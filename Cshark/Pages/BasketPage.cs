@@ -28,6 +28,11 @@ namespace Cshark.Pages
         /// </summary>
         private static By BasketState => By.ClassName("u-centred");
         
+        /// <summary>
+        /// Selector of input to get quantity of product
+        /// </summary>
+        private static By ProductQuantity => By.ClassName("quantity-input");
+        
 
         #endregion
 
@@ -76,6 +81,15 @@ namespace Cshark.Pages
                 return false;
             }
             
+        }
+
+        /// <summary>
+        /// Returns product quantity
+        /// </summary>
+        /// <returns>product quantity as string</returns>
+        internal string GetProductQuantity()
+        {
+            return Driver.FindElement(ProductQuantity).GetAttribute("value");
         }
 
         #endregion
